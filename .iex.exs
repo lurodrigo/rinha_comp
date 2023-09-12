@@ -1,0 +1,1 @@
+alias Rinha, as: R
