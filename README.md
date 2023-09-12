@@ -7,6 +7,8 @@ pra transformar a AST dada em código elixir e então o executa usando `Code.eva
 
 - Gastar pouco tempo (umas três horas, até este momento, mais ou menos)
 - Concisão (~ 150 linhas)
+  - Por tabela, mostrar como os constructos da linguagem da rinha podem ser facilmente mapeados para construtos
+    elixir
 - Completude (acredito que cumpre toda a especificação, exceto talvez pelos inteiros serem unbounded)
 - Simplicidade, clareza e elegância. Um entendimento básico de `quote`/`unquote` e recursão deve ser suficiente
   para entender o funcionamento.
