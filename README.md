@@ -104,4 +104,9 @@ $ mix run rinha.exs run files/fib.json
 
 ## Rodando via Docker
 
-# TODO
+Dockerfile adaptado do [@rcovery](https://github.com/rcovery/rinha-de-compiler) - Obrigado!
+
+```bash
+docker build -t lurodrigo_rinha .
+docker run -v $PWD/files/sum.json:/var/rinha/source.rinha.json lurodrigo_rinha
+```
