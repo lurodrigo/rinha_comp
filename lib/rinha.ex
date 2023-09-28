@@ -1,34 +1,5 @@
 defmodule Rinha do
-  defmodule Stdlib do
-    def as_string(x) when is_integer(x) when is_boolean(x) when is_binary(x),
-      do: to_string(x)
-
-    def as_string({x, y}), do: "{#{as_string(x)}, #{as_string(y)}}"
-
-    def as_string(x) when is_function(x), do: "<#closure>"
-
-    def add(x, y) when is_integer(x) and is_integer(y), do: x + y
-
-    def add(x, y), do: as_string(x) <> as_string(y)
-
-    def print(x), do: IO.puts(as_string(x))
-
-    @spec first({any, any}) :: any
-    def first({x, _}), do: x
-    def second({_, y}), do: y
-
-    def tuple(x, y), do: {x, y}
-
-    def fix(f) do
-      # apply the second expression to itself
-      (fn z ->
-         z.(z)
-       end).(fn x ->
-        # the a here represents the parameters to the recursing function
-        f.(fn a -> x.(x).(a) end)
-      end)
-    end
-  end
+  alias Rinha.Stdlib
 
   def file_to_ir(file) do
     file
@@ -140,7 +111,8 @@ defmodule Rinha do
 
   def ir_to_elixir({:if, condition, then, otherwise}) do
     quote do
-      if unquote(ir_to_elixir(condition)) do
+      if unquote(ir_to_elixir(condition))
+         |> tap(&(is_boolean(&1) || raise("condition must be a boolean"))) do
         unquote(ir_to_elixir(then))
       else
         unquote(ir_to_elixir(otherwise))
