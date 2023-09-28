@@ -25,6 +25,7 @@ O transpiler tem três partes.
   - O operador `+` é overloaded (em Elixir usamos `+` para números e `<>` para string)
   - Similarmente, `print` aqui aceita múltiplos tipos, em comparação com `IO.puts` que é mais estrito.
   - Um operador de ponto fixo (y combinator) (mais sobre isso abaixo)
+  - A linguagem da rinha é mais estrita em relação aos tipos dos argumentos passados aos operadores lógicos, relacionais e a condição do `if` que Elixir.
 - Uma etapa de IR (talvez eu esteja abusando um pouco do termo aqui) que transforma o JSON em uma
   representação intermediária mais conveniente em elixir (em termos de listas, tuplas, átomos e literais primitivos)
 - Uma etapa de transpilação da IR para elixir usando `quote`/`unquote`.
@@ -34,7 +35,7 @@ O transpiler tem três partes.
 Só agora que ia publicar notei que o [colega aqui](https://github.com/rwillians/rinha-de-compilers--elixir-transcompiler/tree/main) já tinha feito uma implementação em elixir
 com ideias similares. Então listo aqui umas diferenças de abordagem:
 
-- Aqui tudo roda em tempo de execução (pode parece curioso, mas `quote`/`unquote` podem ser usados em runtime, sem macros ou metaprogramação a nível de módulo), tanto a transpilação quando a execução.
+- Aqui tudo roda em tempo de execução (pode parecer curioso, mas `quote`/`unquote` podem ser usados em runtime, sem macros ou metaprogramação a nível de módulo), tanto a transpilação quando a execução.
 - Uso apenas tuplas, listas e primitivos para representar a AST, sem definir structs ou typespecs.
 - É possível resolver o problema de definição de funções recursivas usando módulos, mas isso cria certas demandas sobre a ordem de definição deles,
   o que é particularmente complicado para a execução de side-effects `let _ = print ...` ou redefinição de uma

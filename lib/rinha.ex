@@ -39,14 +39,14 @@ defmodule Rinha do
         "Mul" -> {Kernel, :*}
         "Div" -> {Kernel, :div}
         "Rem" -> {Kernel, :rem}
-        "Eq" -> {Kernel, :==}
-        "Neq" -> {Kernel, :!=}
-        "Lt" -> {Kernel, :<}
-        "Lte" -> {Kernel, :<=}
-        "Gt" -> {Kernel, :>}
-        "Gte" -> {Kernel, :>=}
-        "And" -> {Kernel, :&&}
-        "Or" -> {Kernel, :||}
+        "Eq" -> {Stdlib, :eq}
+        "Neq" -> {Stdlib, :neq}
+        "Lt" -> {Stdlib, :lt}
+        "Lte" -> {Stdlib, :lte}
+        "Gt" -> {Stdlib, :gt}
+        "Gte" -> {Stdlib, :gte}
+        "And" -> {Stdlib, :strict_and}
+        "Or" -> {Stdlib, :strict_or}
       end
 
     {:call, op, [to_ir(node["lhs"]), to_ir(node["rhs"])]}
@@ -111,8 +111,7 @@ defmodule Rinha do
 
   def ir_to_elixir({:if, condition, then, otherwise}) do
     quote do
-      if unquote(ir_to_elixir(condition))
-         |> tap(&(is_boolean(&1) || raise("condition must be a boolean"))) do
+      if Stdlib.check_boolean!(unquote(ir_to_elixir(condition))) do
         unquote(ir_to_elixir(then))
       else
         unquote(ir_to_elixir(otherwise))
