@@ -1,5 +1,6 @@
 defmodule Rinha.Stdlib do
   defguard is_primitive(x) when is_integer(x) or is_binary(x) or is_boolean(x)
+  defguard is_addable(x) when is_integer(x) or is_binary(x)
   defguard is_printable(x) when is_primitive(x) or is_function(x) or is_tuple(x)
 
   def as_string(x) when is_primitive(x), do: to_string(x)
@@ -10,7 +11,7 @@ defmodule Rinha.Stdlib do
 
   def add(x, y) when is_integer(x) and is_integer(y), do: x + y
 
-  def add(x, y) when is_printable(x) and is_printable(y), do: as_string(x) <> as_string(y)
+  def add(x, y) when is_addable(x) and is_addable(y), do: as_string(x) <> as_string(y)
 
   def print(x) when is_printable(x), do: IO.puts(as_string(x))
 
