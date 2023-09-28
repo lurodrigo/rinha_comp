@@ -58,15 +58,24 @@ Instalados os pré requisitos, o transpiler pode ser executado em três modos.
 Mostro a representação interna:
 
 ```elixir
-#> mix run rinha.exs ir files/fib.json
-{:let, :fib,
- {:fn, [var: :n],
-  {:if, {:call, {Kernel, :<}, [{:var, :n}, 2]}, {:var, :n},
-   {:call, {Rinha.Stdlib, :add},
-    [
-      {:call, {:var, :fib}, [{:call, {Kernel, :-}, [{:var, :n}, 1]}]},
-      {:call, {:var, :fib}, [{:call, {Kernel, :-}, [{:var, :n}, 2]}]}
-    ]}}}, {:call, {Rinha.Stdlib, :print}, [{:call, {:var, :fib}, '\n'}]}}
+#> mix run rinha.exs ir files/combination.json
+{:let, :combination,
+ {:fn, [var: :n, var: :k],
+  {:let, :a, {:call, {Rinha.Stdlib, :eq}, [{:var, :k}, 0]},
+   {:let, :b, {:call, {Rinha.Stdlib, :eq}, [var: :k, var: :n]},
+    {:if, {:call, {Rinha.Stdlib, :strict_or}, [var: :a, var: :b]}, 1,
+     {:call, {Rinha.Stdlib, :add},
+      [
+        {:call, {:var, :combination},
+         [
+           {:call, {Kernel, :-}, [{:var, :n}, 1]},
+           {:call, {Kernel, :-}, [{:var, :k}, 1]}
+         ]},
+        {:call, {:var, :combination},
+         [{:call, {Kernel, :-}, [{:var, :n}, 1]}, {:var, :k}]}
+      ]}}}}},
+ {:call, {Rinha.Stdlib, :print}, [{:call, {:var, :combination}, [10, 2]}]}}
+
 ```
 
 ### Modo `transpile`
@@ -74,22 +83,31 @@ Mostro a representação interna:
 Mostra o código elixir gerado
 
 ```elixir
-#> mix run rinha.exs transpile files/fib.json
+#> mix run rinha.exs transpile files/combination.json
 alias Rinha.Stdlib
 
 (
-  fib =
-    Stdlib.fix(fn fib ->
-      fn [n] ->
-        if Kernel.<(n, 2) do
-          n
-        else
-          Rinha.Stdlib.add(fib.([Kernel.-(n, 1)]), fib.([Kernel.-(n, 2)]))
-        end
+  combination =
+    Stdlib.fix(fn combination ->
+      fn [n, k] ->
+        a = Stdlib.eq(k, 0)
+
+        (
+          b = Stdlib.eq(k, n)
+
+          if Stdlib.check_boolean!(Stdlib.strict_or(a, b)) do
+            1
+          else
+            Stdlib.add(
+              combination.([Kernel.-(n, 1), Kernel.-(k, 1)]),
+              combination.([Kernel.-(n, 1), k])
+            )
+          end
+        )
       end
     end)
 
-  Rinha.Stdlib.print(fib.('\n'))
+  Stdlib.print(combination.([10, 2]))
 )
 
 ```
@@ -99,8 +117,8 @@ alias Rinha.Stdlib
 Executa, de fato
 
 ```bash
-$ mix run rinha.exs run files/fib.json
-55
+$ mix run rinha.exs run files/combination.json
+45
 ```
 
 ## Rodando via Docker
