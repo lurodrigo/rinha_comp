@@ -11,25 +11,19 @@ defmodule Rinha do
 
   defp from_text(%{"text" => text}), do: String.to_atom(text)
 
-  def to_ir(%{"kind" => "Let"} = node) do
-    {:let, from_text(node["name"]), to_ir(node["value"]), to_ir(node["next"])}
-  end
+  def to_ir(%{"kind" => "Let"} = node),
+    do: {:let, from_text(node["name"]), to_ir(node["value"]), to_ir(node["next"])}
 
-  def to_ir(%{"kind" => "Var"} = node) do
-    {:var, String.to_atom(node["text"])}
-  end
+  def to_ir(%{"kind" => "Var"} = node), do: {:var, String.to_atom(node["text"])}
 
-  def to_ir(%{"kind" => "Call"} = node) do
-    {:call, to_ir(node["callee"]), Enum.map(node["arguments"], &to_ir/1)}
-  end
+  def to_ir(%{"kind" => "Call"} = node),
+    do: {:call, to_ir(node["callee"]), Enum.map(node["arguments"], &to_ir/1)}
 
-  def to_ir(%{"kind" => "Function"} = node) do
-    {:fn, Enum.map(node["parameters"], &{:var, from_text(&1)}), to_ir(node["value"])}
-  end
+  def to_ir(%{"kind" => "Function"} = node),
+    do: {:fn, Enum.map(node["parameters"], &{:var, from_text(&1)}), to_ir(node["value"])}
 
-  def to_ir(%{"kind" => "If"} = node) do
-    {:if, to_ir(node["condition"]), to_ir(node["then"]), to_ir(node["otherwise"])}
-  end
+  def to_ir(%{"kind" => "If"} = node),
+    do: {:if, to_ir(node["condition"]), to_ir(node["then"]), to_ir(node["otherwise"])}
 
   def to_ir(%{"kind" => "Binary"} = node) do
     op =
@@ -54,21 +48,13 @@ defmodule Rinha do
 
   def to_ir(%{"kind" => kind, "value" => value}) when kind in ["Int", "Str", "Bool"], do: value
 
-  def to_ir(%{"kind" => "Print"} = node) do
-    {:call, {Stdlib, :print}, [to_ir(node["value"])]}
-  end
+  def to_ir(%{"kind" => "Print"} = node), do: {:call, {Stdlib, :print}, [to_ir(node["value"])]}
 
-  def to_ir(%{"kind" => "Tuple"} = node) do
-    {:call, {Stdlib, :tuple}, [to_ir(node["value"])]}
-  end
+  def to_ir(%{"kind" => "Tuple"} = node), do: {:call, {Stdlib, :tuple}, [to_ir(node["value"])]}
 
-  def to_ir(%{"kind" => "First"} = node) do
-    {:call, {Stdlib, :first}, [to_ir(node["value"])]}
-  end
+  def to_ir(%{"kind" => "First"} = node), do: {:call, {Stdlib, :first}, [to_ir(node["value"])]}
 
-  def to_ir(%{"kind" => "Second"} = node) do
-    {:call, {Stdlib, :second}, [to_ir(node["value"])]}
-  end
+  def to_ir(%{"kind" => "Second"} = node), do: {:call, {Stdlib, :second}, [to_ir(node["value"])]}
 
   def var(name), do: {name, [], Elixir}
 
