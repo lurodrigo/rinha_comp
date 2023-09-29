@@ -14,7 +14,8 @@ defmodule Rinha do
   def to_ir(%{"kind" => "Let"} = node),
     do: {:let, from_text(node["name"]), to_ir(node["value"]), to_ir(node["next"])}
 
-  def to_ir(%{"kind" => "Var"} = node), do: {:var, String.to_atom(node["text"])}
+  def to_ir(%{"kind" => "Var"} = node),
+    do: {:var, String.to_atom(node["text"])}
 
   def to_ir(%{"kind" => "Call"} = node),
     do: {:call, to_ir(node["callee"]), Enum.map(node["arguments"], &to_ir/1)}
@@ -46,15 +47,20 @@ defmodule Rinha do
     {:call, op, [to_ir(node["lhs"]), to_ir(node["rhs"])]}
   end
 
-  def to_ir(%{"kind" => kind, "value" => value}) when kind in ["Int", "Str", "Bool"], do: value
+  def to_ir(%{"kind" => kind, "value" => value}) when kind in ["Int", "Str", "Bool"],
+    do: value
 
-  def to_ir(%{"kind" => "Print"} = node), do: {:call, {Stdlib, :print}, [to_ir(node["value"])]}
+  def to_ir(%{"kind" => "Print"} = node),
+    do: {:call, {Stdlib, :print}, [to_ir(node["value"])]}
 
-  def to_ir(%{"kind" => "Tuple"} = node), do: {:call, {Stdlib, :tuple}, [to_ir(node["value"])]}
+  def to_ir(%{"kind" => "Tuple"} = node),
+    do: {:call, {Stdlib, :tuple}, [to_ir(node["first"]), to_ir(node["second"])]}
 
-  def to_ir(%{"kind" => "First"} = node), do: {:call, {Stdlib, :first}, [to_ir(node["value"])]}
+  def to_ir(%{"kind" => "First"} = node),
+    do: {:call, {Stdlib, :first}, [to_ir(node["value"])]}
 
-  def to_ir(%{"kind" => "Second"} = node), do: {:call, {Stdlib, :second}, [to_ir(node["value"])]}
+  def to_ir(%{"kind" => "Second"} = node),
+    do: {:call, {Stdlib, :second}, [to_ir(node["value"])]}
 
   def var(name), do: {name, [], Elixir}
 
