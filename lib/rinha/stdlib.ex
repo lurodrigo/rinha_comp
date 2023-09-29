@@ -5,7 +5,7 @@ defmodule Rinha.Stdlib do
 
   def as_string(x) when is_primitive(x), do: to_string(x)
 
-  def as_string({x, y}), do: "{#{as_string(x)}, #{as_string(y)}}"
+  def as_string({x, y}), do: "(#{as_string(x)}, #{as_string(y)})"
 
   def as_string(x) when is_function(x), do: "<#closure>"
 
